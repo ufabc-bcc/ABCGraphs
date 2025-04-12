@@ -142,9 +142,8 @@ where
 /// [1]: fn.min_spanning_tree.html
 pub fn min_spanning_tree_prim<G>(g: G) -> MinSpanningTreePrim<G>
 where
-    G::NodeWeight: Clone,
-    G::EdgeWeight: Clone + PartialOrd,
-    G: IntoNodeReferences + IntoEdgeReferences + NodeIndexable,
+    G::EdgeWeight: PartialOrd,
+    G: IntoNodeReferences + IntoEdgeReferences,
 {
     let sort_edges = BinaryHeap::with_capacity(g.edge_references().size_hint().0);
     let nodes_taken = HashSet::with_capacity(g.node_references().size_hint().0);
@@ -167,12 +166,13 @@ where
 #[derive(Debug, Clone)]
 pub struct MinSpanningTreePrim<G>
 where
-    G: Data + IntoNodeReferences,
+    G: IntoNodeReferences,
 {
     graph: G,
     node_ids: Option<G::NodeReferences>,
     node_map: HashMap<usize, usize>,
     node_count: usize,
+    #[allow(clippy::type_complexity)]
     sort_edges: BinaryHeap<MinScored<G::EdgeWeight, (G::NodeId, G::NodeId)>>,
     nodes_taken: HashSet<usize>,
     initial_node: Option<G::NodeRef>,
@@ -253,6 +253,6 @@ where
             });
         }
 
-        return None;
+        None
     }
 }
